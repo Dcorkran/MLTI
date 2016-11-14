@@ -1,6 +1,15 @@
 var snake, apple, squareSize, score, speed, updateDelay,
 direction, new_direction, addNew, cursors, scoreTextValue,
-speedTextValue, textStyle_Key, textStyle_Value;
+speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer;
+
+function removeTimer(){
+  game.time.events.remove(snakeTimer);
+}
+
+function updateTimer(){
+  timer--;
+  timerTextValue.text = timer;
+}
 
 var Game = {
   preload : function(){
@@ -18,6 +27,7 @@ var Game = {
     direction = 'right';
     new_direction = null;
     addNew = false;
+    timer = 5;
 
     cursors = game.input.keyboard.createCursorKeys();
 
@@ -37,6 +47,12 @@ var Game = {
 
     game.add.text(500,20, 'SPEED', textStyle_Key);
     speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value)
+
+    game.add.text(250,20, 'TIMER', textStyle_Key);
+    timerTextValue = game.add.text(308, 18, timer.toString(), textStyle_Value)
+
+
+    snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
 
   },
 
@@ -60,6 +76,8 @@ var Game = {
       {
           new_direction = 'down';
       }
+
+
 
       // A formula to calculate game speed based on the score.
       // The higher the score, the higher the game speed, with a maximum of 10;
@@ -134,6 +152,9 @@ var Game = {
           // Check for apple collision.
           this.appleCollision();
 
+          //If the timer === 0, Game over
+          this.checkTimer(timer);
+
           // Check for collision with self. Parameter is the head of the snake.
           this.selfCollision(firstCell);
 
@@ -175,6 +196,11 @@ var Game = {
 
               // Increase score.
               score++;
+              // Reset Timer
+              timer = 6;
+              removeTimer();
+              snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
+
 
               // Refresh scoreboard.
               scoreTextValue.text = score.toString();
@@ -208,6 +234,13 @@ var Game = {
           game.state.start('Game_Over');
       }
 
+  },
+
+  checkTimer: function(timer){
+    if (timer === 0) {
+      game.state.start('Game_Over');
+    }
   }
+
 
 };
