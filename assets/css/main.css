@@ -1,0 +1,30 @@
+.page-footer{
+  padding-top: 0;
+  background-color: blue;
+}
+
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+#multi{
+  margin: auto;
+}
+
+.game-card{
+  width: 50%;
+  height: 50vh;
+  margin: auto;
+  padding: 20px;
+}
+
+header{
+  margin-bottom: 2em;
+}
