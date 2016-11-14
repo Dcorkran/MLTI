@@ -28,3 +28,8 @@ main {
 header{
   margin-bottom: 2em;
 }
+
+#logo-img{
+  height: 2em;
+  width: 2em;
+}
