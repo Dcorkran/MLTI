@@ -112,19 +112,19 @@ var Game = {
 
       if (cursors.right.isDown && direction!='left')
       {
-          dodgeSquare.body.velocity.x = 20;
+          dodgeSquare.body.velocity.x += 2;
       }
       else if (cursors.left.isDown && direction!='right')
       {
-          dodgeSquare.body.velocity.x = -20;
+          dodgeSquare.body.velocity.x -= 2;
       }
       else if (cursors.up.isDown && direction!='down')
       {
-          dodgeSquare.body.velocity.y = -20;
+          dodgeSquare.body.velocity.y -= 2;
       }
       else if (cursors.down.isDown && direction!='up')
       {
-          dodgeSquare.body.velocity.y = 20;
+          dodgeSquare.body.velocity.y += 2;
       }
 
 
