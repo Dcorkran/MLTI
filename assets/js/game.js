@@ -1,6 +1,9 @@
 var snake, apple, squareSize, score, speed, updateDelay,
 direction, new_direction, addNew, cursors, scoreTextValue,
-speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer;
+speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer, cameraTest,
+middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare;
+
+
 
 function removeTimer(){
   game.time.events.remove(snakeTimer);
@@ -11,10 +14,20 @@ function updateTimer(){
   timerTextValue.text = timer;
 }
 
+function updateGameScore(){
+  gameScore++;
+}
+
+function cameraAdjust(){
+
+}
+
 var Game = {
   preload : function(){
     game.load.image('snake', './assets/images/snake.png');
     game.load.image('apple', './assets/images/apple.png');
+    game.load.image('yWall', './assets/images/yWall.png');
+    game.load.image('xWall', './assets/images/xWall.png');
   },
 
   create : function(){
@@ -28,13 +41,31 @@ var Game = {
     new_direction = null;
     addNew = false;
     timer = 5;
+    gameScore = 0;
+
+    game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    middleWall = game.add.sprite(300, 0, 'yWall');
+    botWall = game.add.sprite(0, 225, 'xWall');
+    // Phaser.Camera(this,0,0,100,100);
+    // game.camera.width += 2;
+    // game.scale.setGameSize(700, 450);
+    // game.world.setBounds(0, 0, 1200, 900);
+    // game.camera.y = 50;
+    // game.camera.width = 1200;
+    // game.scale.setGameSize(1200, 450);
+              // game.camera.width = 600;
 
     cursors = game.input.keyboard.createCursorKeys();
+    w = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    a = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    s = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    d = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
-    game.stage.backgroundColor = '#061f27';
+    game.stage.backgroundColor = '#ffffff';
 
     for (var i = 0; i < 10; i++) {
-      snake[i] = game.add.sprite(150+i*squareSize, 150, 'snake');
+      snake[i] = game.add.sprite(75+i*squareSize, 150, 'snake');
     }
 
     this.generateApple();
@@ -53,6 +84,7 @@ var Game = {
 
 
     snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
+    gameScoreTimer = game.time.events.loop(Phaser.Timer.SECOND, updateGameScore, this);
 
   },
 
@@ -60,22 +92,41 @@ var Game = {
 
       // Handle arrow key presses, while not allowing illegal direction changes that will kill the player.
 
-      if (cursors.right.isDown && direction!='left')
+      if (d.isDown && direction!='left')
       {
           new_direction = 'right';
       }
-      else if (cursors.left.isDown && direction!='right')
+      else if (a.isDown && direction!='right')
       {
           new_direction = 'left';
       }
-      else if (cursors.up.isDown && direction!='down')
+      else if (w.isDown && direction!='down')
       {
           new_direction = 'up';
       }
-      else if (cursors.down.isDown && direction!='up')
+      else if (s.isDown && direction!='up')
       {
           new_direction = 'down';
       }
+
+
+      if (cursors.right.isDown && direction!='left')
+      {
+          dodgeSquare.body.velocity.x = 20;
+      }
+      else if (cursors.left.isDown && direction!='right')
+      {
+          dodgeSquare.body.velocity.x = -20;
+      }
+      else if (cursors.up.isDown && direction!='down')
+      {
+          dodgeSquare.body.velocity.y = -20;
+      }
+      else if (cursors.down.isDown && direction!='up')
+      {
+          dodgeSquare.body.velocity.y = 20;
+      }
+
 
 
 
@@ -162,6 +213,9 @@ var Game = {
           this.wallCollision(firstCell);
       }
 
+    if (gameScore === 2) {
+      this.startDodge();
+    }
 
   },
 
@@ -171,8 +225,8 @@ var Game = {
       // X is between 0 and 585 (39*15)
       // Y is between 0 and 435 (29*15)
 
-      var randomX = Math.floor(Math.random() * 40 ) * squareSize,
-          randomY = Math.floor(Math.random() * 30 ) * squareSize;
+      var randomX = Math.floor(Math.random() * 20 ) * squareSize,
+          randomY = Math.floor(Math.random() * 15 ) * squareSize;
 
       // Add a new apple.
       apple = game.add.sprite(randomX, randomY, 'apple');
@@ -227,7 +281,7 @@ var Game = {
 
       // Check if the head of the snake is in the boundaries of the game field.
 
-      if(head.x >= 600 || head.x < 0 || head.y >= 450 || head.y < 0){
+      if(head.x >= 300 || head.x < 0 || head.y >= 225 || head.y < 0){
 
 
           // If it's not in, we've hit a wall. Go to game over screen.
@@ -240,6 +294,12 @@ var Game = {
     if (timer === 0) {
       game.state.start('Game_Over');
     }
+  },
+
+  startDodge: function(){
+    dodgeSquare = game.add.sprite(450, 100, 'apple');
+    gameScore++;
+    game.physics.enable( dodgeSquare, Phaser.Physics.ARCADE);
   }
 
 
