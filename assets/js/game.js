@@ -109,23 +109,29 @@ var Game = {
           new_direction = 'down';
       }
 
+      if (gameScore > 2) {
 
-      if (cursors.right.isDown && direction!='left')
-      {
-          dodgeSquare.body.velocity.x += 2;
+        game.physics.arcade.collide(dodgeSquare, middleWall);
+        game.physics.arcade.collide(dodgeSquare, botWall);
+
+        if (cursors.right.isDown && direction!='left')
+        {
+            dodgeSquare.body.velocity.x += 1;
+        }
+        else if (cursors.left.isDown && direction!='right')
+        {
+            dodgeSquare.body.velocity.x -= 1;
+        }
+        else if (cursors.up.isDown && direction!='down')
+        {
+            dodgeSquare.body.velocity.y -= 1;
+        }
+        else if (cursors.down.isDown && direction!='up')
+        {
+            dodgeSquare.body.velocity.y += 1;
+        }
       }
-      else if (cursors.left.isDown && direction!='right')
-      {
-          dodgeSquare.body.velocity.x -= 2;
-      }
-      else if (cursors.up.isDown && direction!='down')
-      {
-          dodgeSquare.body.velocity.y -= 2;
-      }
-      else if (cursors.down.isDown && direction!='up')
-      {
-          dodgeSquare.body.velocity.y += 2;
-      }
+
 
 
 
@@ -299,7 +305,11 @@ var Game = {
   startDodge: function(){
     dodgeSquare = game.add.sprite(450, 100, 'apple');
     gameScore++;
-    game.physics.enable( dodgeSquare, Phaser.Physics.ARCADE);
+    game.physics.enable( [dodgeSquare,middleWall,botWall], Phaser.Physics.ARCADE);
+    dodgeSquare.body.collideWorldBounds = true;
+    dodgeSquare.body.bounce.set(.5);
+    middleWall.body.immovable = true;
+    botWall.body.immovable = true;
   }
 
 
