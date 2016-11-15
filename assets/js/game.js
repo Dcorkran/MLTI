@@ -1,7 +1,8 @@
 var snake, apple, squareSize, score, speed, updateDelay,
 direction, new_direction, addNew, cursors, scoreTextValue,
 speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer, cameraTest,
-middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, weapon;
+middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, shooter2, shooter3, shooter4,
+weapon, weapon2, weapon3, weapon4, background, background2, background3, background4;
 
 
 
@@ -18,18 +19,18 @@ function updateGameScore(){
   gameScore++;
 }
 
-// function cameraAdjust(){
-//
-// }
-
 var Game = {
   preload : function(){
     game.load.image('snake', './assets/images/snake.png');
     game.load.image('apple', './assets/images/apple.png');
     game.load.image('yWall', './assets/images/yWall.png');
     game.load.image('xWall', './assets/images/xWall.png');
-    game.load.image('shooter','./assets/images/shooter3.png')
-    game.load.image('bullet','./assets/images/bullet.png')
+    game.load.image('shooter','./assets/images/shooter3.png');
+    game.load.image('bullet','./assets/images/bullet.png');
+    game.load.image('bg1', './assets/images/background1.png');
+    game.load.image('bg2', './assets/images/background2.png');
+    game.load.image('bg3', './assets/images/background3.png');
+    game.load.image('bg4', './assets/images/backgroundFinal.png');
   },
 
   create : function(){
@@ -64,7 +65,10 @@ var Game = {
     s = game.input.keyboard.addKey(Phaser.Keyboard.S);
     d = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
-    game.stage.backgroundColor = '#ffffff';
+    background4 = game.add.image(0, 0, 'bg4');
+    background3 = game.add.image(0, 0, 'bg3');
+    background2 = game.add.image(0, 0, 'bg2');
+    background = game.add.image(0, 0, 'bg1');
 
     for (var i = 0; i < 10; i++) {
       snake[i] = game.add.sprite(75+i*squareSize, 150, 'snake');
@@ -116,6 +120,9 @@ var Game = {
         game.physics.arcade.collide(dodgeSquare, middleWall);
         game.physics.arcade.collide(dodgeSquare, botWall);
         game.physics.arcade.collide(shooter, botWall);
+        game.physics.arcade.collide(shooter2, middleWall);
+        game.physics.arcade.collide(shooter3, botWall);
+        game.physics.arcade.collide(shooter4, middleWall);
         weapon.fire();
 
         if (cursors.right.isDown && direction!='left')
@@ -134,6 +141,19 @@ var Game = {
         {
             dodgeSquare.body.velocity.y += 1;
         }
+      }
+
+      if (gameScore === 4) {
+        this.addShooter();
+        this.addWeapon();
+      }
+      if (gameScore === 6) {
+        this.addShooter();
+        this.addWeapon();
+      }
+      if (gameScore === 8) {
+        this.addShooter();
+        this.addWeapon();
       }
 
 
@@ -225,6 +245,8 @@ var Game = {
 
     if (gameScore === 2) {
       this.startDodge();
+      background.destroy();
+
     }
 
   },
@@ -308,22 +330,96 @@ var Game = {
 
   startDodge: function(){
     dodgeSquare = game.add.sprite(450, 100, 'apple');
-    shooter = game.add.sprite(300, 200, 'shooter');
+    // shooter = game.add.sprite(300, 200, 'shooter');
     gameScore++;
-    game.physics.enable( [dodgeSquare,middleWall,botWall,shooter], Phaser.Physics.ARCADE);
+    game.physics.enable( [dodgeSquare,middleWall,botWall], Phaser.Physics.ARCADE);
     dodgeSquare.body.collideWorldBounds = true;
     dodgeSquare.body.bounce.set(.5);
-    shooter.body.collideWorldBounds = true;
-    shooter.body.bounce.set(1);
-    shooter.body.velocity.y = 20;
-    weapon = game.add.weapon(1, 'bullet');
-    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-    weapon.bulletSpeed = 40;
-    weapon.trackSprite(shooter, 14, 0);
-    weapon.bulletAngle = 180;
+    this.addShooter();
+    this.addWeapon();
+
+    // shooter.body.collideWorldBounds = true;
+    // shooter.body.bounce.set(1);
+    // shooter.body.velocity.y = 20;
+
 
     middleWall.body.immovable = true;
     botWall.body.immovable = true;
+  },
+
+  addShooter: function(){
+    if (shooter === undefined) {
+      shooter = game.add.sprite(300, 200, 'shooter');
+      game.physics.enable( shooter, Phaser.Physics.ARCADE);
+      shooter.body.collideWorldBounds = true;
+      shooter.body.bounce.set(1);
+      shooter.body.velocity.y = 20;
+    } else if (shooter2 === undefined) {
+      gameScore++;
+      shooter2 = game.add.sprite(450, 0, 'shooter');
+      game.physics.enable( shooter2, Phaser.Physics.ARCADE);
+      shooter2.body.collideWorldBounds = true;
+      shooter2.body.bounce.set(1);
+      shooter2.body.velocity.x = 20;
+      shooter2.angle = 90;
+    } else if (shooter3 === undefined) {
+      gameScore++;
+      shooter3 = game.add.sprite(600, 0, 'shooter');
+      game.physics.enable( shooter3, Phaser.Physics.ARCADE);
+      shooter3.body.collideWorldBounds = true;
+      shooter3.body.bounce.set(1);
+      shooter3.body.velocity.y = 20;
+      shooter3.scale.x =-1;
+    } else if (shooter4 === undefined) {
+      gameScore++;
+      shooter4 = game.add.sprite(450, 225, 'shooter');
+      game.physics.enable( shooter4, Phaser.Physics.ARCADE);
+      shooter4.body.collideWorldBounds = true;
+      shooter4.body.bounce.set(1);
+      shooter4.body.velocity.x = 20;
+      shooter4.angle = 270;
+    }
+  },
+
+  addWeapon: function(){
+    if (weapon === undefined) {
+      weapon = game.add.weapon(1, 'bullet');
+      weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      weapon.bulletSpeedVariance = 50;
+      weapon.bulletSpeed = 75;
+      weapon.fireAngle = Phaser.ANGLE_RIGHT;
+      weapon.trackSprite(shooter, 14, 0);
+      weapon.bulletAngleOffset = 90;
+    } else if (weapon2 === undefined) {
+      weapon2 = game.add.weapon(1, 'bullet');
+      weapon2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      weapon2.bulletSpeedVariance = 50;
+      weapon2.bulletSpeed = 75;
+      weapon2.fireAngle = Phaser.ANGLE_DOWN;
+      weapon2.trackSprite(shooter2, 0, 14);
+      weapon2.bulletAngleOffset = 90;
+      weapon2.fire()
+
+    } else if (weapon3 === undefined) {
+      weapon3 = game.add.weapon(1, 'bullet');
+      weapon3.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      weapon3.bulletSpeedVariance = 50;
+      weapon3.bulletSpeed = 75;
+      weapon3.fireAngle = Phaser.ANGLE_LEFT;
+      weapon3.trackSprite(shooter3, -14, 0);
+      weapon3.bulletAngleOffset = 90;
+      weapon3.fire()
+    } else if (weapon4 === undefined) {
+      weapon4 = game.add.weapon(1, 'bullet');
+      weapon4.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      weapon4.bulletSpeedVariance = 50;
+      weapon4.bulletSpeed = 75;
+      weapon4.fireAngle = Phaser.ANGLE_UP;
+      weapon4.trackSprite(shooter4, 0, -14);
+      weapon4.bulletAngleOffset = 90;
+            weapon4.fire()
+    }
+
   }
 
 
