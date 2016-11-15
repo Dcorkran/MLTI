@@ -1,7 +1,7 @@
 var snake, apple, squareSize, score, speed, updateDelay,
 direction, new_direction, addNew, cursors, scoreTextValue,
 speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer, cameraTest,
-middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare;
+middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, weapon;
 
 
 
@@ -18,9 +18,9 @@ function updateGameScore(){
   gameScore++;
 }
 
-function cameraAdjust(){
-
-}
+// function cameraAdjust(){
+//
+// }
 
 var Game = {
   preload : function(){
@@ -28,6 +28,8 @@ var Game = {
     game.load.image('apple', './assets/images/apple.png');
     game.load.image('yWall', './assets/images/yWall.png');
     game.load.image('xWall', './assets/images/xWall.png');
+    game.load.image('shooter','./assets/images/shooter3.png')
+    game.load.image('bullet','./assets/images/bullet.png')
   },
 
   create : function(){
@@ -113,6 +115,8 @@ var Game = {
 
         game.physics.arcade.collide(dodgeSquare, middleWall);
         game.physics.arcade.collide(dodgeSquare, botWall);
+        game.physics.arcade.collide(shooter, botWall);
+        weapon.fire();
 
         if (cursors.right.isDown && direction!='left')
         {
@@ -304,10 +308,20 @@ var Game = {
 
   startDodge: function(){
     dodgeSquare = game.add.sprite(450, 100, 'apple');
+    shooter = game.add.sprite(300, 200, 'shooter');
     gameScore++;
-    game.physics.enable( [dodgeSquare,middleWall,botWall], Phaser.Physics.ARCADE);
+    game.physics.enable( [dodgeSquare,middleWall,botWall,shooter], Phaser.Physics.ARCADE);
     dodgeSquare.body.collideWorldBounds = true;
     dodgeSquare.body.bounce.set(.5);
+    shooter.body.collideWorldBounds = true;
+    shooter.body.bounce.set(1);
+    shooter.body.velocity.y = 20;
+    weapon = game.add.weapon(1, 'bullet');
+    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+    weapon.bulletSpeed = 40;
+    weapon.trackSprite(shooter, 14, 0);
+    weapon.bulletAngle = 180;
+
     middleWall.body.immovable = true;
     botWall.body.immovable = true;
   }
