@@ -2,7 +2,8 @@ var snake, apple, squareSize, score, speed, updateDelay,
 direction, new_direction, addNew, cursors, scoreTextValue,
 speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer, cameraTest,
 middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, shooter2, shooter3, shooter4,
-weapon, weapon2, weapon3, weapon4, background, background2, background3, background4;
+weapon, weapon2, weapon3, weapon4, background, background2, background3, background4, bullet1, bullet2, bullet3,
+bullet4;
 
 
 
@@ -124,6 +125,7 @@ var Game = {
         game.physics.arcade.collide(shooter3, botWall);
         game.physics.arcade.collide(shooter4, middleWall);
         weapon.fire();
+        this.checkBulletCollision();
 
         if (cursors.right.isDown && direction!='left')
         {
@@ -142,21 +144,25 @@ var Game = {
             dodgeSquare.body.velocity.y += 1;
         }
       }
-
+      //
       if (gameScore === 4) {
         this.addShooter();
         this.addWeapon();
+        weapon2.fire();
       }
-      if (gameScore === 6) {
-        this.addShooter();
-        this.addWeapon();
+      // if (gameScore === 6) {
+      //   this.addShooter();
+      //   this.addWeapon();
+      // }
+      // if (gameScore === 8) {
+      //   this.addShooter();
+      //   this.addWeapon();
+      // }
+      //
+      if (gameScore > 4) {
+        game.physics.arcade.collide(weapon2.bullets, botWall, this.killBulletBot, null, this);
+        weapon2.fire();
       }
-      if (gameScore === 8) {
-        this.addShooter();
-        this.addWeapon();
-      }
-
-
 
 
 
@@ -241,6 +247,8 @@ var Game = {
 
           // Check with collision with wall. Parameter is the head of the snake.
           this.wallCollision(firstCell);
+
+
       }
 
     if (gameScore === 2) {
@@ -248,6 +256,11 @@ var Game = {
       background.destroy();
 
     }
+    //
+    // if (gameScore === 4) {
+    //   this.startJump();
+    //   background2.destroy();
+    // }
 
   },
 
@@ -337,12 +350,6 @@ var Game = {
     dodgeSquare.body.bounce.set(.5);
     this.addShooter();
     this.addWeapon();
-
-    // shooter.body.collideWorldBounds = true;
-    // shooter.body.bounce.set(1);
-    // shooter.body.velocity.y = 20;
-
-
     middleWall.body.immovable = true;
     botWall.body.immovable = true;
   },
@@ -392,14 +399,13 @@ var Game = {
       weapon.bulletAngleOffset = 90;
     } else if (weapon2 === undefined) {
       weapon2 = game.add.weapon(1, 'bullet');
-      weapon2.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+      // weapon2.bulletKillType = Phaser.Weapon.KILL_DISTANCE;
+      // weapon2.bulletDistance.y = 200;
       weapon2.bulletSpeedVariance = 50;
       weapon2.bulletSpeed = 75;
       weapon2.fireAngle = Phaser.ANGLE_DOWN;
       weapon2.trackSprite(shooter2, 0, 14);
       weapon2.bulletAngleOffset = 90;
-      weapon2.fire()
-
     } else if (weapon3 === undefined) {
       weapon3 = game.add.weapon(1, 'bullet');
       weapon3.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
@@ -408,7 +414,6 @@ var Game = {
       weapon3.fireAngle = Phaser.ANGLE_LEFT;
       weapon3.trackSprite(shooter3, -14, 0);
       weapon3.bulletAngleOffset = 90;
-      weapon3.fire()
     } else if (weapon4 === undefined) {
       weapon4 = game.add.weapon(1, 'bullet');
       weapon4.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
@@ -417,9 +422,22 @@ var Game = {
       weapon4.fireAngle = Phaser.ANGLE_UP;
       weapon4.trackSprite(shooter4, 0, -14);
       weapon4.bulletAngleOffset = 90;
-            weapon4.fire()
     }
 
+  },
+
+  checkBulletCollision: function(){
+    game.physics.arcade.collide(dodgeSquare, weapon.bullets, this.gameOver, null, this);
+
+
+  },
+
+  gameOver: function(){
+    game.state.start('Game_Over');
+  },
+
+  killBulletBot: function(botWall, bullet ){
+    bullet.kill();
   }
 
 
