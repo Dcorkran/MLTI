@@ -4,7 +4,7 @@ speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTime
 middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, shooter2, shooter3, shooter4,
 weapon, weapon2, weapon3, weapon4, background, background2, background3, background4, bullet1, bullet2, bullet3,
 bullet4, space, jumpBox, jumpWall, /*jumpWallBox,*/ gap, mathTimer,mathAnswerTimer, mathProblem, textStyle_Key2, textStyle_Value2,
-key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer;
+key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer, redX;
 
 
 
@@ -33,6 +33,7 @@ var Game = {
     game.load.image('bg2', './assets/images/background2.png');
     game.load.image('bg3', './assets/images/background3.png');
     game.load.image('bg4', './assets/images/backgroundFinal.png');
+    game.load.image('redX','./assets/images/redX.png')
   },
 
   create : function(){
@@ -45,10 +46,20 @@ var Game = {
     direction = 'right';
     new_direction = null;
     addNew = false;
-    timer = 5;
+    timer = 7;
     gameScore = 0;
     jumpWall = game.add.group();
     level = 1;
+    weapon = undefined;
+    weapon2 = undefined;
+    weapon3 = undefined;
+    weapon4 = undefined;
+    shooter = undefined;
+    shooter2 = undefined;
+    shooter3 = undefined;
+    shooter4 = undefined;
+    dodgeSquare = undefined;
+
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -73,7 +84,7 @@ var Game = {
 
 
     space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    space.onDown.add(this.unpause, self);
+    game.input.onDown.add(this.unpause, self);
 
     background4 = game.add.image(0, 0, 'bg4');
     background3 = game.add.image(0, 0, 'bg3');
@@ -89,14 +100,14 @@ var Game = {
     textStyle_Key = {font: 'bold 14px sans-serif', fill: "#46c0f9", align: 'center'};
     textStyle_Value = { font: "bold 18px sans-serif", fill: "#fff", align: "center" };
 
-    game.add.text(30,20, 'SCORE', textStyle_Key);
-    scoreTextValue = game.add.text(90,18,score.toString(), textStyle_Value);
+    // game.add.text(30,20, 'SCORE', textStyle_Key);
+    // scoreTextValue = game.add.text(90,18,score.toString(), textStyle_Value);
+    //
+    // game.add.text(500,20, 'SPEED', textStyle_Key);
+    // speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value)
 
-    game.add.text(500,20, 'SPEED', textStyle_Key);
-    speedTextValue = game.add.text(558, 18, speed.toString(), textStyle_Value)
-
-    game.add.text(250,20, 'TIMER', textStyle_Key);
-    timerTextValue = game.add.text(308, 18, timer.toString(), textStyle_Value)
+    game.add.text(30,20, 'TIMER', textStyle_Key);
+    timerTextValue = game.add.text(80, 18, timer.toString(), textStyle_Value);
 
 
     snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
@@ -137,20 +148,20 @@ var Game = {
         background.destroy();
         this.levelPause();
         level++;
-      } else if (gameScore === 4) {
+      } else if (gameScore === 5) {
         background2.destroy();
         this.startJump();
         space.onDown.add(this.jump, this);
         this.createWall();
-        this.addShooter();
-        this.addWeapon();
+        // this.addShooter();
+        // this.addWeapon();
         this.levelPause();
         level++;
-      } else if (gameScore === 40) {
+      } else if (gameScore === 7) {
         background3.destroy();
         textStyle_Key2 = {font: 'bold 30px sans-serif', fill: "#46c0f9", align: 'center'};
         textStyle_Value2 = { font: "bold 40px sans-serif", fill: "#fff", align: "center" };
-        game.add.text(375,338, 'SOLVE:', textStyle_Key2);
+        game.add.text(400,300, 'SOLVE', textStyle_Key2);
         this.levelPause();
         gameScore++;
         level++;
@@ -161,28 +172,37 @@ var Game = {
         weapon.fire();
         this.checkBulletCollision();
 
-        if (cursors.right.isDown && direction!='left')
+        if (cursors.right.isDown)
         {
             dodgeSquare.body.velocity.x += 5;
         }
-        else if (cursors.left.isDown && direction!='right')
+        else if (cursors.left.isDown)
         {
             dodgeSquare.body.velocity.x -= 5;
         }
-        else if (cursors.up.isDown && direction!='down')
+        else if (cursors.up.isDown)
         {
             dodgeSquare.body.velocity.y -= 5;
         }
-        else if (cursors.down.isDown && direction!='up')
+        else if (cursors.down.isDown)
         {
             dodgeSquare.body.velocity.y += 5;
         }
       }
 
       if (level > 2) {
-        game.physics.arcade.collide(weapon2.bullets, botWall, this.killBulletBot, null, this);
-        weapon2.fire();
-        game.physics.arcade.overlap(jumpWall, jumpBox, this.gameOver, null, this);
+        // game.physics.arcade.collide(weapon2.bullets, botWall, this.killBulletBot, null, this);
+        // weapon2.fire();
+
+        // function setGameOver(level) {
+        //   return function() {
+        //     this.gameOver(level);
+        //   }
+        // }
+
+        game.physics.arcade.overlap(jumpWall, jumpBox, function(){
+          this.gameOver(3);
+        }, null, this);
         // this.createWall();
       }
       //
@@ -216,7 +236,7 @@ var Game = {
       // The higher the score, the higher the game speed, with a maximum of 10;
       speed = Math.min(10, Math.floor(score/5));
       // Update speed value on game screen.
-      speedTextValue.text = '' + speed;
+      // speedTextValue.text = '' + speed;
 
       // Since the update function of Phaser has an update rate of around 60 FPS,
       // we need to slow that down make the game playable.
@@ -352,13 +372,13 @@ var Game = {
               // Increase score.
               score++;
               // Reset Timer
-              timer = 6;
+              timer = 7;
               removeTimer();
               snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
 
 
               // Refresh scoreboard.
-              scoreTextValue.text = score.toString();
+              // scoreTextValue.text = score.toString();
 
           }
       }
@@ -372,7 +392,7 @@ var Game = {
           if(head.x == snake[i].x && head.y == snake[i].y){
 
               // If so, go to game over screen.
-              game.state.start('Game_Over');
+              this.gameOver(1)
           }
       }
 
@@ -386,14 +406,14 @@ var Game = {
 
 
           // If it's not in, we've hit a wall. Go to game over screen.
-          game.state.start('Game_Over');
+          this.gameOver(1);
       }
 
   },
 
   checkTimer: function(timer){
     if (timer === 0) {
-      game.state.start('Game_Over');
+      this.gameOver(1);
     }
   },
 
@@ -484,10 +504,43 @@ var Game = {
   },
 
   checkBulletCollision: function(){
-    game.physics.arcade.collide(dodgeSquare, weapon.bullets, this.gameOver, null, this);
+    game.physics.arcade.collide(dodgeSquare, weapon.bullets, function(){
+      this.gameOver(2);
+    }, null, this);
+    if (weapon2 != undefined) {
+      game.physics.arcade.collide(dodgeSquare, weapon2.bullets, function(){
+        this.gameOver(2);
+      }, null, this);
+      game.physics.arcade.collide(weapon2.bullets, botWall, function(){
+        this.gameOver(2);
+      }, null, this);
+      weapon2.fire();
+    }
+    if (weapon3 != undefined) {
+      game.physics.arcade.collide(dodgeSquare, weapon3.bullets, function(){
+        this.gameOver(2);
+      }, null, this);
+    }
+    if (weapon4 != undefined) {
+      game.physics.arcade.collide(dodgeSquare, weapon4.bullets, function(){
+        this.gameOver(2);
+      }, null, this);
+    }
   },
 
-  gameOver: function(){
+  gameOver: function(gameNumber){
+    if (gameNumber === 1) {
+      redX = game.add.image(0, 0, 'redX');
+    } else if (gameNumber === 2) {
+      redX = game.add.image(300, 0, 'redX');
+    } else if (gameNumber === 3) {
+      redX = game.add.image(0, 225, 'redX');
+    } else {
+      redX = game.add.image(300, 225, 'redX');
+    }
+    game.add.text(100, 175, "CLICK ANYWHERE", { font: "bold 44px sans-serif", fill: "#46c0f9", align: "center"});
+    game.add.text(150, 225, "TO CONTINUE", { font: "bold 44px sans-serif", fill: "#46c0f9", align: "center"});
+    game.paused = true;
     game.state.start('Game_Over');
   },
 
@@ -499,19 +552,18 @@ var Game = {
     gameScore++;
     jumpBox = game.add.sprite(50, 435, 'apple');
     game.physics.arcade.enable(jumpBox, Phaser.Physics.ARCADE);
-    jumpBox.body.gravity.y = 700;
+    jumpBox.body.gravity.y = 300;
     jumpBox.body.collideWorldBounds=true;
   },
   jump: function(){
-    jumpBox.body.velocity.y = -350;
+    jumpBox.body.velocity.y = -200;
   },
 
   createWall: function(){
-    gap = Math.floor(Math.random() * 10);
+    gap = Math.floor(Math.random() * 9);
     for (var i = 0, j = 0; i < 15; i++) {
-      if (i !== gap && i !== gap+1 && i !== gap+2 && i!== gap+3 && i!== gap+4) {
+      if (i !== gap && i !== gap+1 && i !== gap+2 && i!== gap+3 && i!== gap+4 && i!== gap+5) {
         this.createWallPiece(285,435 - (i*15));
-        this.addWallTimer();
         // jumpWall.create(285, 435-(i*15) ,'apple');
         // game.physics.arcade.enable(jumpWall.children[j], Phaser.Physics.ARCADE);
         // jumpWall.children[j].body.velocity.x = -50;
@@ -519,6 +571,7 @@ var Game = {
         // j++;
       }
     }
+    this.addWallTimer();
     game.world.bringToTop(jumpWall);
 
   },
@@ -526,12 +579,12 @@ var Game = {
     var jumpWallBox = game.add.sprite(x,y,'apple');
     jumpWall.add(jumpWallBox);
     game.physics.arcade.enable(jumpWallBox, Phaser.Physics.ARCADE);
-    jumpWallBox.body.velocity.x = -100;
+    jumpWallBox.body.velocity.x = -75;
     jumpWallBox.checkWorldBounds = true;
     jumpWallBox.outOfBoundsKill = true;
   },
   addWallTimer: function(){
-    var randomNum = Math.floor(Math.random() * 5) + 5;
+    var randomNum = Math.floor(Math.random() * 5) + 7;
     wallTimer = game.time.events.add(Phaser.Timer.SECOND * randomNum, this.createWall, this);
   },
 
@@ -543,8 +596,8 @@ var Game = {
   displayMathProblem: function(){
     mathProblem = ['2+2','4+1','1+4','5+3','9-5','3+1','8-5','7-1','1+8'];
     var randomIndex = Math.floor(Math.random() * (mathProblem.length - 1));
-    randomMathProblem = mathProblem[randomIndex]
-    mathTextValue = game.add.text(400,400,randomMathProblem, textStyle_Value2);
+    randomMathProblem = mathProblem[randomIndex];
+    mathTextValue = game.add.text(415,350,randomMathProblem, textStyle_Value2);
     this.startMathAnswerTimer();
   },
 
@@ -586,7 +639,7 @@ var Game = {
 
   checkMathAnswer: function(){
     if (mathAnswer != eval(randomMathProblem)) {
-      game.state.start('Game_Over');
+      this.gameOver(4);
     } else {
       mathAnswer = -1;
       mathTextValue.destroy();
@@ -600,6 +653,7 @@ var Game = {
   unpause: function(){
     game.paused = false;
   }
+
 
 
 
