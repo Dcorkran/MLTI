@@ -3,7 +3,8 @@ direction, new_direction, addNew, cursors, scoreTextValue,
 speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTimer, cameraTest,
 middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, shooter2, shooter3, shooter4,
 weapon, weapon2, weapon3, weapon4, background, background2, background3, background4, bullet1, bullet2, bullet3,
-bullet4;
+bullet4, space, jumpBox, jumpWall, /*jumpWallBox,*/ gap, mathTimer,mathAnswerTimer, mathProblem, textStyle_Key2, textStyle_Value2,
+key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer;
 
 
 
@@ -46,32 +47,40 @@ var Game = {
     addNew = false;
     timer = 5;
     gameScore = 0;
+    jumpWall = game.add.group();
+    level = 1;
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     middleWall = game.add.sprite(300, 0, 'yWall');
     botWall = game.add.sprite(0, 225, 'xWall');
-    // Phaser.Camera(this,0,0,100,100);
-    // game.camera.width += 2;
-    // game.scale.setGameSize(700, 450);
-    // game.world.setBounds(0, 0, 1200, 900);
-    // game.camera.y = 50;
-    // game.camera.width = 1200;
-    // game.scale.setGameSize(1200, 450);
-              // game.camera.width = 600;
-
     cursors = game.input.keyboard.createCursorKeys();
     w = game.input.keyboard.addKey(Phaser.Keyboard.W);
     a = game.input.keyboard.addKey(Phaser.Keyboard.A);
     s = game.input.keyboard.addKey(Phaser.Keyboard.S);
     d = game.input.keyboard.addKey(Phaser.Keyboard.D);
 
+    key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+    key2 = game.input.keyboard.addKey(Phaser.Keyboard.TWO);
+    key3 = game.input.keyboard.addKey(Phaser.Keyboard.THREE);
+    key4 = game.input.keyboard.addKey(Phaser.Keyboard.FOUR);
+    key5 = game.input.keyboard.addKey(Phaser.Keyboard.FIVE);
+    key6 = game.input.keyboard.addKey(Phaser.Keyboard.SIX);
+    key7 = game.input.keyboard.addKey(Phaser.Keyboard.SEVEN);
+    key8 = game.input.keyboard.addKey(Phaser.Keyboard.EIGHT);
+    key9 = game.input.keyboard.addKey(Phaser.Keyboard.NINE);
+    key0 = game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
+
+
+    space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    space.onDown.add(this.unpause, self);
+
     background4 = game.add.image(0, 0, 'bg4');
     background3 = game.add.image(0, 0, 'bg3');
     background2 = game.add.image(0, 0, 'bg2');
     background = game.add.image(0, 0, 'bg1');
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 5; i++) {
       snake[i] = game.add.sprite(75+i*squareSize, 150, 'snake');
     }
 
@@ -97,6 +106,14 @@ var Game = {
 
   update: function() {
 
+    game.physics.arcade.collide(dodgeSquare, middleWall);
+    game.physics.arcade.collide(dodgeSquare, botWall);
+    game.physics.arcade.collide(shooter, botWall);
+    game.physics.arcade.collide(shooter2, middleWall);
+    game.physics.arcade.collide(shooter3, botWall);
+    game.physics.arcade.collide(shooter4, middleWall);
+    game.physics.arcade.collide(jumpBox, botWall);
+
       // Handle arrow key presses, while not allowing illegal direction changes that will kill the player.
 
       if (d.isDown && direction!='left')
@@ -115,41 +132,64 @@ var Game = {
       {
           new_direction = 'down';
       }
+      if (gameScore === 2) {
+        this.startDodge();
+        background.destroy();
+        this.levelPause();
+        level++;
+      } else if (gameScore === 4) {
+        background2.destroy();
+        this.startJump();
+        space.onDown.add(this.jump, this);
+        this.createWall();
+        this.addShooter();
+        this.addWeapon();
+        this.levelPause();
+        level++;
+      } else if (gameScore === 40) {
+        background3.destroy();
+        textStyle_Key2 = {font: 'bold 30px sans-serif', fill: "#46c0f9", align: 'center'};
+        textStyle_Value2 = { font: "bold 40px sans-serif", fill: "#fff", align: "center" };
+        game.add.text(375,338, 'SOLVE:', textStyle_Key2);
+        this.levelPause();
+        gameScore++;
+        level++;
+        this.addMathTimer();
+      }
 
-      if (gameScore > 2) {
-
-        game.physics.arcade.collide(dodgeSquare, middleWall);
-        game.physics.arcade.collide(dodgeSquare, botWall);
-        game.physics.arcade.collide(shooter, botWall);
-        game.physics.arcade.collide(shooter2, middleWall);
-        game.physics.arcade.collide(shooter3, botWall);
-        game.physics.arcade.collide(shooter4, middleWall);
+      if (level > 1) {
         weapon.fire();
         this.checkBulletCollision();
 
         if (cursors.right.isDown && direction!='left')
         {
-            dodgeSquare.body.velocity.x += 1;
+            dodgeSquare.body.velocity.x += 5;
         }
         else if (cursors.left.isDown && direction!='right')
         {
-            dodgeSquare.body.velocity.x -= 1;
+            dodgeSquare.body.velocity.x -= 5;
         }
         else if (cursors.up.isDown && direction!='down')
         {
-            dodgeSquare.body.velocity.y -= 1;
+            dodgeSquare.body.velocity.y -= 5;
         }
         else if (cursors.down.isDown && direction!='up')
         {
-            dodgeSquare.body.velocity.y += 1;
+            dodgeSquare.body.velocity.y += 5;
         }
       }
-      //
-      if (gameScore === 4) {
-        this.addShooter();
-        this.addWeapon();
+
+      if (level > 2) {
+        game.physics.arcade.collide(weapon2.bullets, botWall, this.killBulletBot, null, this);
         weapon2.fire();
+        game.physics.arcade.overlap(jumpWall, jumpBox, this.gameOver, null, this);
+        // this.createWall();
       }
+      //
+      // if (gameScore === 4) {
+
+      //   weapon2.fire();
+      // }
       // if (gameScore === 6) {
       //   this.addShooter();
       //   this.addWeapon();
@@ -159,11 +199,17 @@ var Game = {
       //   this.addWeapon();
       // }
       //
-      if (gameScore > 4) {
-        game.physics.arcade.collide(weapon2.bullets, botWall, this.killBulletBot, null, this);
-        weapon2.fire();
-      }
 
+      // if (gameScore === 30) {
+      //   this.addShooter();
+      //   this.addWeapon();
+      //   this.levelPause();
+      // }
+
+
+      if (gameScore > 7) {
+        this.checkMathInput();
+      }
 
 
       // A formula to calculate game speed based on the score.
@@ -181,7 +227,7 @@ var Game = {
       // Do game stuff only if the counter is aliquot to (10 - the game speed).
       // The higher the speed, the more frequently this is fulfilled,
       // making the snake move faster.
-      if (updateDelay % (10 - speed) == 0) {
+      if (updateDelay % (15 - speed) == 0) {
 
 
           // Snake movement
@@ -251,15 +297,25 @@ var Game = {
 
       }
 
-    if (gameScore === 2) {
-      this.startDodge();
-      background.destroy();
+    // if (gameScore === 2) {
 
-    }
     //
+    // }
+
     // if (gameScore === 4) {
-    //   this.startJump();
     //   background2.destroy();
+    //   this.startJump();
+    //   space.onDown.add(this.jump, this);
+    //   // this.createWall();
+    // }
+
+    // if (gameScore === 6) {
+    //   background3.destroy();
+    //   textStyle_Key2 = {font: 'bold 30px sans-serif', fill: "#46c0f9", align: 'center'};
+    //   textStyle_Value2 = { font: "bold 40px sans-serif", fill: "#fff", align: "center" };
+    //   game.add.text(375,338, 'SOLVE:', textStyle_Key2);
+    //   gameScore++;
+    //   this.addMathTimer();
     // }
 
   },
@@ -348,6 +404,7 @@ var Game = {
     game.physics.enable( [dodgeSquare,middleWall,botWall], Phaser.Physics.ARCADE);
     dodgeSquare.body.collideWorldBounds = true;
     dodgeSquare.body.bounce.set(.5);
+    dodgeSquare.body.maxVelocity = 50;
     this.addShooter();
     this.addWeapon();
     middleWall.body.immovable = true;
@@ -428,17 +485,122 @@ var Game = {
 
   checkBulletCollision: function(){
     game.physics.arcade.collide(dodgeSquare, weapon.bullets, this.gameOver, null, this);
-
-
   },
 
   gameOver: function(){
     game.state.start('Game_Over');
   },
 
-  killBulletBot: function(botWall, bullet ){
+  killBulletBot: function(botWall, bullet){
     bullet.kill();
+  },
+
+  startJump: function(){
+    gameScore++;
+    jumpBox = game.add.sprite(50, 435, 'apple');
+    game.physics.arcade.enable(jumpBox, Phaser.Physics.ARCADE);
+    jumpBox.body.gravity.y = 700;
+    jumpBox.body.collideWorldBounds=true;
+  },
+  jump: function(){
+    jumpBox.body.velocity.y = -350;
+  },
+
+  createWall: function(){
+    gap = Math.floor(Math.random() * 10);
+    for (var i = 0, j = 0; i < 15; i++) {
+      if (i !== gap && i !== gap+1 && i !== gap+2 && i!== gap+3 && i!== gap+4) {
+        this.createWallPiece(285,435 - (i*15));
+        this.addWallTimer();
+        // jumpWall.create(285, 435-(i*15) ,'apple');
+        // game.physics.arcade.enable(jumpWall.children[j], Phaser.Physics.ARCADE);
+        // jumpWall.children[j].body.velocity.x = -50;
+        // jumpWall.children[j].outOfBoundsKill = true;
+        // j++;
+      }
+    }
+    game.world.bringToTop(jumpWall);
+
+  },
+  createWallPiece: function(x,y){
+    var jumpWallBox = game.add.sprite(x,y,'apple');
+    jumpWall.add(jumpWallBox);
+    game.physics.arcade.enable(jumpWallBox, Phaser.Physics.ARCADE);
+    jumpWallBox.body.velocity.x = -100;
+    jumpWallBox.checkWorldBounds = true;
+    jumpWallBox.outOfBoundsKill = true;
+  },
+  addWallTimer: function(){
+    var randomNum = Math.floor(Math.random() * 5) + 5;
+    wallTimer = game.time.events.add(Phaser.Timer.SECOND * randomNum, this.createWall, this);
+  },
+
+  addMathTimer: function(){
+    var randomNum = Math.floor(Math.random() * 3) + 5;
+    mathTimer = game.time.events.add(Phaser.Timer.SECOND * randomNum, this.displayMathProblem, this);
+  },
+
+  displayMathProblem: function(){
+    mathProblem = ['2+2','4+1','1+4','5+3','9-5','3+1','8-5','7-1','1+8'];
+    var randomIndex = Math.floor(Math.random() * (mathProblem.length - 1));
+    randomMathProblem = mathProblem[randomIndex]
+    mathTextValue = game.add.text(400,400,randomMathProblem, textStyle_Value2);
+    this.startMathAnswerTimer();
+  },
+
+  checkMathInput: function(){
+    if (key1.isDown) {
+      mathAnswer = 1;
+    } else if (key2.isDown) {
+      mathAnswer = 2;
+    } else if (key3.isDown) {
+      mathAnswer = 3;
+    } else if (key4.isDown) {
+      mathAnswer = 4;
+    } else if (key5.isDown) {
+      mathAnswer = 5;
+    } else if (key6.isDown) {
+      mathAnswer = 6;
+    } else if (key7.isDown) {
+      mathAnswer = 7;
+    } else if (key8.isDown) {
+      mathAnswer = 8;
+    } else if (key9.isDown) {
+      mathAnswer = 9;
+    } else if (key0.isDown) {
+      mathAnswer = 0;
+    }
+    // for (var i = 0; i < 10; i++) {
+    //
+    //
+    //   if (['key'+[i]].isDown) {
+    //     console.log(i);
+    //     return i;
+    //   }
+    // }
+  },
+
+  startMathAnswerTimer: function(){
+    mathAnswerTimer = game.time.events.add(Phaser.Timer.SECOND * 5, this.checkMathAnswer, this);
+  },
+
+  checkMathAnswer: function(){
+    if (mathAnswer != eval(randomMathProblem)) {
+      game.state.start('Game_Over');
+    } else {
+      mathAnswer = -1;
+      mathTextValue.destroy();
+      this.addMathTimer();
+    }
+  },
+
+  levelPause: function(){
+    game.paused = true;
+  },
+  unpause: function(){
+    game.paused = false;
   }
+
 
 
 };
