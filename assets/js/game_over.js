@@ -3,6 +3,7 @@ var Game_Over = {
     preload : function() {
         // Load the needed image for this game screen.
         game.load.image('gameover', './assets/images/gameover.png');
+        this.getLeaderBoard();
     },
 
     create : function() {
@@ -20,6 +21,12 @@ var Game_Over = {
         // Change the state back to Game.
         this.state.start('Game');
 
+    },
+
+    getLeaderBoard: function() {
+      $.get("https://galvanize-leader-board.herokuapp.com/api/v1/leader-board", function(data) {
+        console.log(data);
+      });
     }
 
 };

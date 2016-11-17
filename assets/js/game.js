@@ -4,7 +4,8 @@ speedTextValue, textStyle_Key, textStyle_Value, timer, timerTextValue, snakeTime
 middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, shooter2, shooter3, shooter4,
 weapon, weapon2, weapon3, weapon4, background, background2, background3, background4, bullet1, bullet2, bullet3,
 bullet4, space, jumpBox, jumpWall, /*jumpWallBox,*/ gap, mathTimer,mathAnswerTimer, mathProblem, textStyle_Key2, textStyle_Value2,
-key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer, redX;
+key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer, redX, buzz, ding,
+pause1,pause2,pause3,pause4, answerTextValue;
 
 
 
@@ -15,6 +16,10 @@ function removeTimer(){
 function updateTimer(){
   timer--;
   timerTextValue.text = timer;
+}
+
+function updateMathText(){
+  answerTextValue.text = mathAnswer;
 }
 
 function updateGameScore(){
@@ -33,7 +38,13 @@ var Game = {
     game.load.image('bg2', './assets/images/background2.png');
     game.load.image('bg3', './assets/images/background3.png');
     game.load.image('bg4', './assets/images/backgroundFinal.png');
-    game.load.image('redX','./assets/images/redX.png')
+    game.load.image('pause1', './assets/images/wasd1.png');
+    game.load.image('pause2', './assets/images/arrows1.png');
+    game.load.image('pause3', './assets/images/spacebar1.png');
+    game.load.image('pause4', './assets/images/numbers1.png');
+    game.load.image('redX','./assets/images/redX.png');
+    game.load.audio('buzz', './assets/buzz.mp3');
+    game.load.audio('ding', './assets/ding.wav');
   },
 
   create : function(){
@@ -59,6 +70,12 @@ var Game = {
     shooter3 = undefined;
     shooter4 = undefined;
     dodgeSquare = undefined;
+    // fx = game.add.audio('sfx');
+    // fx.allowMultiple = true;
+    buzz = game.add.audio('buzz');
+    ding = game.add.audio('ding');
+    mathAnswer = 0;
+
 
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -110,13 +127,14 @@ var Game = {
     timerTextValue = game.add.text(80, 18, timer.toString(), textStyle_Value);
 
 
+
+
     snakeTimer = game.time.events.loop(Phaser.Timer.SECOND, updateTimer, this);
     gameScoreTimer = game.time.events.loop(Phaser.Timer.SECOND, updateGameScore, this);
 
   },
 
   update: function() {
-
     game.physics.arcade.collide(dodgeSquare, middleWall);
     game.physics.arcade.collide(dodgeSquare, botWall);
     game.physics.arcade.collide(shooter, botWall);
@@ -124,6 +142,12 @@ var Game = {
     game.physics.arcade.collide(shooter3, botWall);
     game.physics.arcade.collide(shooter4, middleWall);
     game.physics.arcade.collide(jumpBox, botWall);
+
+    if (gameScore === 0) {
+      this.levelPause(1);
+      gameScore++;
+    }
+
 
       // Handle arrow key presses, while not allowing illegal direction changes that will kill the player.
 
@@ -146,7 +170,7 @@ var Game = {
       if (gameScore === 2) {
         this.startDodge();
         background.destroy();
-        this.levelPause();
+        this.levelPause(2);
         level++;
       } else if (gameScore === 5) {
         background2.destroy();
@@ -155,14 +179,16 @@ var Game = {
         this.createWall();
         // this.addShooter();
         // this.addWeapon();
-        this.levelPause();
+        this.levelPause(3);
         level++;
       } else if (gameScore === 7) {
         background3.destroy();
         textStyle_Key2 = {font: 'bold 30px sans-serif', fill: "#46c0f9", align: 'center'};
         textStyle_Value2 = { font: "bold 40px sans-serif", fill: "#fff", align: "center" };
-        game.add.text(400,300, 'SOLVE', textStyle_Key2);
-        this.levelPause();
+        game.add.text(400,250, 'SOLVE', textStyle_Key2);
+        game.add.text(350,350, 'YOUR ANSWER', textStyle_Key2);
+        this.levelPause(4);
+        answerTextValue = game.add.text(425,400,mathAnswer.toString(), textStyle_Value2);
         gameScore++;
         level++;
         this.addMathTimer();
@@ -229,6 +255,7 @@ var Game = {
 
       if (gameScore > 7) {
         this.checkMathInput();
+
       }
 
 
@@ -538,8 +565,8 @@ var Game = {
     } else {
       redX = game.add.image(300, 225, 'redX');
     }
-    game.add.text(100, 175, "CLICK ANYWHERE", { font: "bold 44px sans-serif", fill: "#46c0f9", align: "center"});
-    game.add.text(150, 225, "TO CONTINUE", { font: "bold 44px sans-serif", fill: "#46c0f9", align: "center"});
+    game.add.text(100, 150, "CLICK ANYWHERE", { font: "bold 44px sans-serif", fill: "#424242", align: "center"});
+    game.add.text(105, 250, "FOR YOUR SCORE", { font: "bold 44px sans-serif", fill: "#424242", align: "center"});
     game.paused = true;
     game.state.start('Game_Over');
   },
@@ -597,7 +624,8 @@ var Game = {
     mathProblem = ['2+2','4+1','1+4','5+3','9-5','3+1','8-5','7-1','1+8'];
     var randomIndex = Math.floor(Math.random() * (mathProblem.length - 1));
     randomMathProblem = mathProblem[randomIndex];
-    mathTextValue = game.add.text(415,350,randomMathProblem, textStyle_Value2);
+    mathTextValue = game.add.text(425,300,randomMathProblem, textStyle_Value2);
+    buzz.play();
     this.startMathAnswerTimer();
   },
 
@@ -623,6 +651,8 @@ var Game = {
     } else if (key0.isDown) {
       mathAnswer = 0;
     }
+
+    updateMathText();
     // for (var i = 0; i < 10; i++) {
     //
     //
@@ -642,16 +672,34 @@ var Game = {
       this.gameOver(4);
     } else {
       mathAnswer = -1;
+      ding.play();
       mathTextValue.destroy();
       this.addMathTimer();
     }
   },
 
-  levelPause: function(){
-    game.paused = true;
+  levelPause: function(pauseNumber){
+    if (pauseNumber === 1) {
+      pause1 = game.add.image(150, 112, 'pause1');
+      pause1.aplha = 0.8;
+      game.paused = true;
+    } else if (pauseNumber === 2) {
+      pause2 = game.add.image(150, 112, 'pause2');
+      game.paused = true;
+    } else if (pauseNumber === 3) {
+      pause3 = game.add.image(150, 112, 'pause3');
+      game.paused = true;
+    } else {
+      pause4 = game.add.image(150, 112, 'pause4');
+      game.paused = true;
+    }
   },
   unpause: function(){
     game.paused = false;
+    pause1.destroy();
+    pause2.destroy();
+    pause3.destroy();
+    pause4.destroy();
   }
 
 
