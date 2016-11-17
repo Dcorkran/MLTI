@@ -681,7 +681,6 @@ var Game = {
   levelPause: function(pauseNumber){
     if (pauseNumber === 1) {
       pause1 = game.add.image(150, 112, 'pause1');
-      pause1.aplha = 0.8;
       game.paused = true;
     } else if (pauseNumber === 2) {
       pause2 = game.add.image(150, 112, 'pause2');
@@ -696,10 +695,18 @@ var Game = {
   },
   unpause: function(){
     game.paused = false;
-    pause1.destroy();
-    pause2.destroy();
-    pause3.destroy();
-    pause4.destroy();
+    if (pause1) {
+      pause1.destroy();
+      pause1 = undefined;
+    } else if (pause2) {
+      pause2.destroy();
+      pause2 = undefined;
+    } else if (pause3) {
+      pause3.destroy();
+      pause3 = undefined;
+    } else if (pause4) {
+      pause4.destroy();
+    }
   }
 
 

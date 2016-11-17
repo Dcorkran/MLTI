@@ -24,8 +24,15 @@ var Game_Over = {
     },
 
     getLeaderBoard: function() {
-      $.get("https://galvanize-leader-board.herokuapp.com/api/v1/leader-board", function(data) {
-        console.log(data);
+      var requestStr = 'https://galvanize-leader-board.herokuapp.com/api/v1/leader-board';
+      $.ajax({
+          type: "GET",
+          url: requestStr,
+          dataType: "json",
+          success: function(data){
+            console.log('test');
+            console.log(data);
+          }
       });
     }
 
