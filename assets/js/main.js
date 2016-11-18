@@ -24,10 +24,10 @@ $( document ).ready(function() {
       event.preventDefault();
       if ($('#first_name2').val() !== '') {
         playerName = $('#first_name2').val();
-        Materialize.toast('Thank You '+playerName+'!', 3000);
+        Materialize.toast('Thank You, '+playerName+'!', 3000);
         $('#leaderboard-card').remove();
       } else {
-        Materialize.toast('Please enter a name before submission', 3000);
+        Materialize.toast('Please enter a name!', 3000);
       }
     });
   getLeaderBoard();

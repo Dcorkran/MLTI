@@ -447,7 +447,7 @@ var Game = {
   },
 
   startDodge: function(){
-    dodgeSquare = game.add.sprite(450, 100, 'apple');
+    dodgeSquare = game.add.sprite(450, 100, 'snake');
     // shooter = game.add.sprite(300, 200, 'shooter');
     gameScore++;
     game.physics.enable( [dodgeSquare,middleWall,botWall], Phaser.Physics.ARCADE);
@@ -579,7 +579,7 @@ var Game = {
 
   startJump: function(){
     gameScore++;
-    jumpBox = game.add.sprite(50, 435, 'apple');
+    jumpBox = game.add.sprite(50, 435, 'snake');
     game.physics.arcade.enable(jumpBox, Phaser.Physics.ARCADE);
     jumpBox.body.gravity.y = 300;
     jumpBox.body.collideWorldBounds=true;
