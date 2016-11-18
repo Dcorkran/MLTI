@@ -45,7 +45,7 @@ var Game_Over = {
 
     preload: function() {
         // Load the needed image for this game screen.
-        game.load.image('gameover', './assets/images/gameover.png');
+        game.load.image('gameover', './assets/images/mlti2.png');
         if (gameScore > 30 && playerName != '') {
             postScore();
             setTimeout(displayLeaderBoard(), 2000);
@@ -65,6 +65,11 @@ var Game_Over = {
         game.add.text(325, 348, gameScore.toString(), {
             font: "bold 20px sans-serif",
             fill: "#fff",
+            align: "center"
+        });
+        game.add.text(190, 400, "Click To Play Again", {
+            font: "bold 24px sans-serif",
+            fill: "#46c0f9",
             align: "center"
         });
 

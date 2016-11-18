@@ -190,7 +190,7 @@ var Game = {
         game.add.text(400,250, 'SOLVE', textStyle_Key2);
         game.add.text(350,350, 'YOUR ANSWER', textStyle_Key2);
         this.levelPause(4);
-        answerTextValue = game.add.text(425,400,mathAnswer.toString(), textStyle_Value2);
+        answerTextValue = game.add.text(475,400,mathAnswer.toString(), textStyle_Value2);
         gameScore++;
         level++;
         this.addMathTimer();

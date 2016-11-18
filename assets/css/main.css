@@ -6,7 +6,7 @@
 
 body {
   display: flex;
-  min-height: 100vh;
+  max-height: 100vh;
   flex-direction: column;
   /*width: 800px;
   margin: auto;*/
@@ -34,7 +34,7 @@ main {
   margin: auto;
   padding: 20px;
   margin-top: 2em;
-  margin-bottom: 2em;
+  /*margin-bottom: 2em;*/
 }
 
 header{
