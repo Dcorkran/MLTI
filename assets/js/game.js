@@ -5,7 +5,7 @@ middleWall, botWall, gameScore, gameScoreTimer, w,a,s,d, dodgeSquare, shooter, s
 weapon, weapon2, weapon3, weapon4, background, background2, background3, background4, bullet1, bullet2, bullet3,
 bullet4, space, jumpBox, jumpWall, /*jumpWallBox,*/ gap, mathTimer,mathAnswerTimer, mathProblem, textStyle_Key2, textStyle_Value2,
 key1,key2,key3,key4,key5,key6,key7,key8,key9,key0, mathAnswer, randomMathProblem, level, wallTimer, redX, buzz, ding,
-pause1,pause2,pause3,pause4, answerTextValue;
+pause1,pause2,pause3,pause4, answerTextValue, enter, greenCheck;
 
 
 
@@ -43,6 +43,7 @@ var Game = {
     game.load.image('pause3', './assets/images/spacebar1.png');
     game.load.image('pause4', './assets/images/numbers1.png');
     game.load.image('redX','./assets/images/redX.png');
+    game.load.image('greenCheck', './assets/images/greenCheck.png')
     game.load.audio('buzz', './assets/buzz.mp3');
     game.load.audio('ding', './assets/ding.wav');
   },
@@ -98,10 +99,11 @@ var Game = {
     key8 = game.input.keyboard.addKey(Phaser.Keyboard.EIGHT);
     key9 = game.input.keyboard.addKey(Phaser.Keyboard.NINE);
     key0 = game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
+    enter = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 
 
     space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-    game.input.onDown.add(this.unpause, self);
+    enter.onDown.add(this.unpause, self);
 
     background4 = game.add.image(0, 0, 'bg4');
     background3 = game.add.image(0, 0, 'bg3');
@@ -167,12 +169,12 @@ var Game = {
       {
           new_direction = 'down';
       }
-      if (gameScore === 2) {
+      if (gameScore === 15) {
         this.startDodge();
         background.destroy();
         this.levelPause(2);
         level++;
-      } else if (gameScore === 5) {
+      } else if (gameScore === 45) {
         background2.destroy();
         this.startJump();
         space.onDown.add(this.jump, this);
@@ -181,7 +183,7 @@ var Game = {
         // this.addWeapon();
         this.levelPause(3);
         level++;
-      } else if (gameScore === 7) {
+      } else if (gameScore === 60) {
         background3.destroy();
         textStyle_Key2 = {font: 'bold 30px sans-serif', fill: "#46c0f9", align: 'center'};
         textStyle_Value2 = { font: "bold 40px sans-serif", fill: "#fff", align: "center" };
@@ -253,7 +255,7 @@ var Game = {
       // }
 
 
-      if (gameScore > 7) {
+      if (gameScore > 60) {
         this.checkMathInput();
 
       }
@@ -565,7 +567,7 @@ var Game = {
     } else {
       redX = game.add.image(300, 225, 'redX');
     }
-    game.add.text(100, 150, "CLICK ANYWHERE", { font: "bold 44px sans-serif", fill: "#424242", align: "center"});
+    game.add.text(150, 150, "PRESS ENTER", { font: "bold 44px sans-serif", fill: "#424242", align: "center"});
     game.add.text(105, 250, "FOR YOUR SCORE", { font: "bold 44px sans-serif", fill: "#424242", align: "center"});
     game.paused = true;
     game.state.start('Game_Over');
@@ -672,7 +674,12 @@ var Game = {
       this.gameOver(4);
     } else {
       mathAnswer = -1;
+      greenCheck = game.add.image(300, 225, 'greenCheck');
       ding.play();
+      game.time.events.add(Phaser.Timer.SECOND * 2, function(){
+        greenCheck.destroy();
+      }, this);
+
       mathTextValue.destroy();
       this.addMathTimer();
     }

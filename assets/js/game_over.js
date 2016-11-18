@@ -1,9 +1,37 @@
+function getLeaderBoard(){
+  var requestStr = 'https://galvanize-leader-board.herokuapp.com/api/v1/leader-board';
+  $.ajax({
+      type: "GET",
+      url: requestStr,
+      dataType: "JSON",
+      success: function(data){
+        console.log(data);
+      }
+  });
+}
+
+function postScore(){
+  var newHighScore = {
+        "game_name": "MLTI",
+        "player_name": playerName,
+        "score": gameScore
+  };
+  $.post( 'https://galvanize-leader-board.herokuapp.com/api/v1/leader-board',newHighScore, function(data){
+    console.log('posted');
+  });
+
+}
+// https://galvanize-leader-board.herokuapp.com/api/v1/leader-board
+
 var Game_Over = {
 
     preload : function() {
         // Load the needed image for this game screen.
         game.load.image('gameover', './assets/images/gameover.png');
-        this.getLeaderBoard();
+        getLeaderBoard();
+        if (gameScore > 2) {
+          postScore();
+        }
     },
 
     create : function() {
@@ -23,17 +51,8 @@ var Game_Over = {
 
     },
 
-    getLeaderBoard: function() {
-      var requestStr = 'https://galvanize-leader-board.herokuapp.com/api/v1/leader-board';
-      $.ajax({
-          type: "GET",
-          url: requestStr,
-          dataType: "json",
-          success: function(data){
-            console.log('test');
-            console.log(data);
-          }
-      });
-    }
+    // getLeaderBoard: function() {
+    //
+    // }
 
 };

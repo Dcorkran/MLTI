@@ -19,8 +19,8 @@ main {
 }
 
 .game-card{
-  width: 50%;
-  height: 50vh;
+  /*width: 50%;*/
+  /*height: 50vh;*/
   margin: auto;
   padding: 20px;
 }
@@ -32,4 +32,8 @@ header{
 #logo-img{
   height: 2em;
   width: 2em;
+}
+
+#buttoncontainer{
+  justify-content: center;
 }
