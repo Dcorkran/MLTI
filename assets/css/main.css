@@ -13,7 +13,8 @@ body {
     /*background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);*/
     height: 1440;
     width: 900;
-      background-color: #607D8B;
+      /*background-color: #607D8B;*/
+            background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);
 }
 
 html{
@@ -55,4 +56,11 @@ header{
 
 .social{
   margin-top: .75em;
+}
+
+.card .card-title{
+  /*font-weight: 0;*/
+  background: -webkit-linear-gradient(right, #DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
