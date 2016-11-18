@@ -8,6 +8,16 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  /*width: 800px;
+  margin: auto;*/
+    background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);
+}
+
+html{
+  /*background-color: #607D8B;*/
+
+
+  /*background: linear-gradient(to bottom right, red, yellow);*/
 }
 
 main {
@@ -23,6 +33,7 @@ main {
   /*height: 50vh;*/
   margin: auto;
   padding: 20px;
+  margin-top: 2em;
 }
 
 header{

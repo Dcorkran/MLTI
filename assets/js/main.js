@@ -18,7 +18,7 @@ function displayLeaderBoard(){
 
 $( document ).ready(function() {
 
-    Materialize.toast('If you would like to use the leaderboard, please submit your name in the form below!', 3000);
+    Materialize.toast('If you would like to use the leaderboard, please submit your name!', 3000);
 
     $('#submit-button').on('click',function(event){
       event.preventDefault();

@@ -46,7 +46,7 @@ var Game_Over = {
     preload: function() {
         // Load the needed image for this game screen.
         game.load.image('gameover', './assets/images/gameover.png');
-        if (gameScore > 30) {
+        if (gameScore > 30 && playerName != '') {
             postScore();
             setTimeout(displayLeaderBoard(), 2000);
         }
