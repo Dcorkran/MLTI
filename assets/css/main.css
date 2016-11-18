@@ -6,17 +6,20 @@
 
 body {
   display: flex;
-  max-height: 100vh;
+  /*max-height: 100vh;*/
   flex-direction: column;
   /*width: 800px;
   margin: auto;*/
-    background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);
+    /*background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);*/
+    height: 1440;
+    width: 900;
+      background-color: #607D8B;
 }
 
 html{
   /*background-color: #607D8B;*/
 
-
+      background: linear-gradient(#DFF0DA, #DAECF4,#FCF8E5,#F2DEDE);
   /*background: linear-gradient(to bottom right, red, yellow);*/
 }
 
@@ -48,4 +51,8 @@ header{
 
 #buttoncontainer{
   justify-content: center;
+}
+
+.social{
+  margin-top: .75em;
 }
